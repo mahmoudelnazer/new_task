@@ -1,0 +1,49 @@
+
+
+services:
+  backend:
+    build: .
+    command: python3 -m uvicorn fastapi_backend:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - CHUNK_SIZE=${CHUNK_SIZE}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP}
+      - MODEL_NAME=${MODEL_NAME}
+      - EMBEDDING_MODEL_NAME=${EMBEDDING_MODEL_NAME}
+      - MAX_TOKENS=${MAX_TOKENS}
+      - TEMPERATURE=${TEMPERATURE}
+    volumes:
+      - ./data:/app/data
+      - .:/app
+    networks:
+      - rag-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build: .
+    command: python3 -m streamlit run streamlit_frontend.py
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://backend:8000
+    depends_on:
+      - backend
+    volumes:
+      - ./data:/app/data
+      - .:/app
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+    driver: bridge
+
+volumes:
+  data:
