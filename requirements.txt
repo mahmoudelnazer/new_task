@@ -1,19 +1,4 @@
 
-
-# # FastAPI Backend
-# fastapi
-# uvicorn
-# python-multipart
-# requests
-# python-dotenv
-# # LlamaIndex
-# llama-index
-# llama-index-llms-azure-openai
-# llama-index-embeddings-azure-openai
-
-# # Streamlit Frontend
-# streamlit
-
 fastapi
 uvicorn
 python-multipart
